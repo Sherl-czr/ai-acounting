@@ -11,7 +11,7 @@ import sys
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("Sherl&zz记账程序")
+        self.setWindowTitle("记账程序")
         self.setGeometry(100, 100, 800, 600)
 
        # 设置窗口图标

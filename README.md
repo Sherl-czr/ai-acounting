@@ -7,13 +7,19 @@
 3. 生成详细的消费统计报告
 4. 自动创建可视化图表（饼图和柱状图）
 5. 识别并展示大额消费记录
+6. **新增**：支持打包为可执行文件，方便分发
+7. **新增**：支持自定义输出目录和程序图标
 
 ## 依赖安装
 在运行程序前，请确保已安装以下依赖：
 
 ```bash
-pip install openai requests matplotlib
+pip install openai requests matplotlib pyqt5 pyinstaller
 ```
+
+### 新增依赖说明：
+- **PyQt5**：用于图形用户界面（GUI）
+- **PyInstaller**：用于将程序打包为可执行文件
 
 对于中文字体支持，不同系统需要额外配置：
 - Windows：确保系统已安装微软雅黑（Microsoft YaHei）或黑体（SimHei）字体
@@ -22,7 +28,7 @@ pip install openai requests matplotlib
 
 ## 配置修改
 在使用前需要修改以下配置：
-1. 打开 `accounting_processor.py` 文件
+1. 打开 `main_gui.py` 文件
 2. 找到以下代码并进行修改：
 ```python
 # ... existing code ...
@@ -30,6 +36,7 @@ api_key = ""  # 替换为你的API Key
 processor = AccountProcessor(api_key)
 # ... existing code ...
 ```
+
 3. 如果需要使用其他AI服务，可以修改base_url：
 ```python
 # ... existing code ...
@@ -39,6 +46,49 @@ self.client = OpenAI(
 )
 # ... existing code ...
 ```
+
+## 新增功能
+1. **图形用户界面（GUI）**：
+   - 提供更友好的用户交互界面
+   - 支持文件选择和参数配置
+
+2. **打包支持**：
+   - 使用PyInstaller将程序打包为可执行文件
+   - 支持Windows、macOS和Linux平台
+
+3. **自定义输出**：
+   - 支持指定输出目录
+   - 自动创建输出目录（默认：`output`）
+
+4. **程序图标**：
+   - 支持自定义程序图标
+   - 图标文件位于 `resources/logo.ico`
+
+## 使用说明
+### 开发环境运行
+1. 准备两个输入文件：
+   - `categories.md`：定义消费分类标准
+   - `记账内容.md`：包含原始消费记录
+2. 运行程序：
+```bash
+python src/main_gui.py
+```
+
+### 打包程序
+1. 确保已安装PyInstaller
+2. 运行打包命令：
+```bash
+pyinstaller main_gui.spec
+```
+3. 打包后的程序位于 `dist/main_gui/` 目录
+
+### 运行打包后的程序
+1. 进入 `dist/main_gui/` 目录
+2. 运行 `main_gui.exe`（Windows）或 `main_gui`（macOS/Linux）
+3. 程序将生成：
+   - `config.txt`：处理后的格式化数据
+   - `月度消费统计.png`：消费分类饼图
+   - `月度5笔最高消费.png`：大额消费柱状图
 
 ## 可扩展性
 本程序具有良好的扩展性，以下是一些可扩展的方向：
@@ -63,17 +113,12 @@ self.client = OpenAI(
    - 添加PDF报告生成功能
    - 增加更多统计指标（如月度对比、趋势分析等）
 
-## 使用说明
-1. 准备两个输入文件：
-   - `categories.md`：定义消费分类标准
-   - `记账内容.md`：包含原始消费记录
-2. 运行程序：
-```bash
-python accounting_processor.py
-```
-3. 程序将生成：
-   - `config.txt`：处理后的格式化数据
-   - `月度消费统计.png`：消费分类饼图
-   - `月度5笔最高消费.png`：大额消费柱状图
+6. **GUI扩展**：
+   - 添加更多配置选项
+   - 支持主题切换
+   - 添加帮助文档和示例
 
-这个README文件包含了项目介绍、依赖安装说明、配置修改指南和可扩展性说明。你可以根据实际需求进一步调整内容。
+## 注意事项
+1. 确保 `resources/logo.ico` 文件存在
+2. 打包前请测试所有功能
+3. 如果使用自定义AI服务，请确保API地址和密钥正确
