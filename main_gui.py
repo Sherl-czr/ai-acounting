@@ -1,5 +1,6 @@
 import os
 
+from PyQt5.QtCore import QSettings
 from PyQt5.QtWidgets import (QApplication, QMainWindow, QWidget, QVBoxLayout,
                             QHBoxLayout, QLabel, QLineEdit, QPushButton, 
                             QTextEdit, QFileDialog, QComboBox)
@@ -11,10 +12,11 @@ import sys
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
+        self.settings = QSettings("SherlsApp", "AccountApp")  # 新增设置对象
         self.setWindowTitle("记账程序")
         self.setGeometry(100, 100, 800, 600)
-
-       # 设置窗口图标
+        
+        # 设置窗口图标
         icon_path = self.get_resource_path('resources/logo.ico')
         if os.path.exists(icon_path):
             self.setWindowIcon(QIcon(icon_path))
@@ -67,7 +69,7 @@ class MainWindow(QMainWindow):
         run_btn.clicked.connect(self.run_classification)
         layout.addWidget(run_btn)
         
-         # 添加输出目录设置
+        # 添加输出目录设置
         output_layout = QHBoxLayout()
         output_layout.addWidget(QLabel("输出目录:"))
         self.output_dir = QLineEdit("output")
@@ -82,6 +84,33 @@ class MainWindow(QMainWindow):
         self.output_area.setReadOnly(True)
         layout.addWidget(self.output_area)
         
+        # 加载上一次的settings
+        self.load_settings()
+
+    def load_settings(self):
+        """加载保存的设置"""
+        self.api_input.setText(self.settings.value("api_key", ""))
+        self.url_input.setText(self.settings.value("base_url", "https://api.deepseek.com/v1"))
+        self.model_combo.setCurrentText(self.settings.value("model", "deepseek-chat"))
+        self.categories_file.setText(self.settings.value("categories_file", "分类标准.md"))
+        self.content_file.setText(self.settings.value("content_file", "记账内容.md"))
+        self.output_dir.setText(self.settings.value("output_dir", "output"))
+
+    def save_settings(self):
+        """保存当前设置"""
+        self.settings.setValue("api_key", self.api_input.text())
+        self.settings.setValue("base_url", self.url_input.text())
+        self.settings.setValue("model", self.model_combo.currentText())
+        self.settings.setValue("categories_file", self.categories_file.text())
+        self.settings.setValue("content_file", self.content_file.text())
+        self.settings.setValue("output_dir", self.output_dir.text())
+
+
+    def closeEvent(self, event):
+        """窗口关闭时保存设置"""
+        self.save_settings()
+        event.accept()
+
     def get_resource_path(self, relative_path):
         """获取资源文件的绝对路径"""
         try:

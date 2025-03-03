@@ -5,9 +5,7 @@ block_cipher = None
 # 添加数据文件（如分类标准.md、记账内容.md等）
 datas = [
     ('resources/logo.ico', 'resources'),  # 添加图标文件
-    ('分类标准.md', 'src'),
-    ('记账内容.md', 'src'),
-    ('prompt.md', 'src')
+    ('prompt.md', '.')
 ]
 
 # 主程序配置
@@ -20,7 +18,19 @@ a = Analysis(
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],
-    excludes=[],
+    excludes=[  # 排除不需要的库
+        'pandas', 'numpy', 'scipy', 'sqlalchemy', 'tensorflow', 'keras',
+        'sklearn', 'statsmodels', 'seaborn', 'bokeh', 'plotly', 'django', 'flask',
+        'sqlite3', 'mysql', 'psycopg2', 'pyodbc', 'cx_Oracle', 'pymongo', 'redis',
+        'pillow', 'opencv', 'pygame', 'pyglet', 'pyqtwebengine', 'qt', 'tkinter',
+        'tornado', 'asyncio', 'gevent', 'twisted', 'zmq', 'paramiko', 'fabric',
+        'boto3', 'botocore', 'awscli', 'azure', 'google', 'gcloud', 'openpyxl',
+        'xlrd', 'xlwt', 'xlsxwriter', 'pytz', 'dateutil', 'tzdata', 'cryptography',
+        'pycrypto', 'pyopenssl', 'rsa', 'paramiko', 'fabric', 'boto3', 'botocore',
+        'awscli', 'azure', 'google', 'gcloud', 'openpyxl', 'xlrd', 'xlwt', 'xlsxwriter',
+        'pytz', 'dateutil', 'tzdata', 'cryptography', 'pycrypto', 'pyopenssl', 'rsa'
+    ],
+    
     win_no_prefer_redirects=False,
     win_private_assemblies=False,
     cipher=block_cipher,
