@@ -1,4 +1,5 @@
 import os
+import time
 
 from PyQt5.QtCore import QSettings
 from PyQt5.QtWidgets import (QApplication, QMainWindow, QWidget, QVBoxLayout,
@@ -140,30 +141,42 @@ class MainWindow(QMainWindow):
         if dir_path:
             self.output_dir.setText(dir_path)
 
+    def append_output(self, text):
+        """实时显示输出内容"""
+        self.output_area.append(text)
+        self.output_area.repaint()  # 强制刷新界面
+        QApplication.processEvents()  # 处理事件队列，确保界面更新
+
     def run_classification(self):
-        """运行分类程序"""
-        self.output_area.clear()
-        
-        # 获取输入
-        api_key = self.api_input.text()
-        base_url = self.url_input.text()
-        model_name = self.model_combo.currentText()
-        categories_file = self.categories_file.text()
-        content_file = self.content_file.text()
-        output_dir = self.output_dir.text()
-        
-        if not api_key:
-            self.output_area.append("错误：请先输入API Key")
-            return
-            
-        # 创建输出目录
-        if not os.path.exists(output_dir):
-            os.makedirs(output_dir)
-            
-        # 初始化处理器
         try:
+            """运行分类程序"""
+            self.output_area.clear()
+            start_time = time.time()
+            self.append_output("开始运行分类...\n大概需要2分钟请等待...")
+
+            # 获取输入
+            api_key = self.api_input.text()
+            base_url = self.url_input.text()
+            model_name = self.model_combo.currentText()
+            categories_file = self.categories_file.text()
+            content_file = self.content_file.text()
+            output_dir = self.output_dir.text()
+            
+            if not api_key:
+                self.append_output("错误：请先输入API Key")
+                return
+                
+            # 创建输出目录
+            if not os.path.exists(output_dir):
+                os.makedirs(output_dir)
+                
+            # 初始化处理器
+            
             processor = AccountProcessor(api_key, base_url, model_name, self.output_area, output_dir)
             processor.run(categories_file, content_file)
+            elapsed_time = time.time() - start_time
+            self.append_output(f"分类完成，总耗时: {elapsed_time:.2f} 秒")
+    
                 
         except Exception as e:
             self.output_area.append(f"发生错误：{str(e)}")

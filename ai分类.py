@@ -20,8 +20,9 @@ class AccountProcessor:
             self.console.log(f"读取文件 {file_path} 失败: {str(e)}")
             return ""
     def get_prompt_template(self):
+        """返回嵌入的 prompt 模板"""
         return """
-
+```
 请将以下消费记录转换为标准格式。
 
 【输出格式要求】
@@ -41,19 +42,21 @@ DATE:2024-01-01 TYPE:食物 NAME:午餐 COST:45.00
 【需要转换的消费记录】
 
 
-        """
+```
 
+        """
     def create_prompt(self, categories_file, content_file):
         """组合 prompt"""
         categories = self.read_file(categories_file)
         content = self.read_file(content_file)
         prompt_template = self.get_prompt_template()
 
-
         prompt = prompt_template.replace(
-            "【分类标准】\n", f"【分类标准】\n{categories}\n"
+            "【分类标准】\n",
+            "【分类标准】\n" + categories + "\n"
         ).replace(
-            "【需要转换的消费记录】\n", f"【需要转换的消费记录】\n{content}\n"
+            "【需要转换的消费记录】\n",
+            "【需要转换的消费记录】\n" + content + "\n"
         )
 
         self.console.log("\n=== 生成的 Prompt ===")
@@ -61,7 +64,6 @@ DATE:2024-01-01 TYPE:食物 NAME:午餐 COST:45.00
         self.console.log("=== Prompt 结束 ===\n")
 
         return prompt
-    
         
     def process_accounts(self, prompt):
         """使用 AI 处理账目"""
